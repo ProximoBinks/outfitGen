@@ -34,6 +34,7 @@ export async function getStaticProps() {
       socks,
       shoes,
     },
+    revalidate: 60, // Revalidate every 60 seconds
   };
 }
 
@@ -290,7 +291,7 @@ export default function Home({ tops, bottoms, socks, shoes }) {
         />
       </div>
 
-      <div className="mt-[-130px]">
+      <div className="mt-[-100px]">
         <div className="relative mt-5 z-20">
           <h2 className="font-bold">Tops</h2>
           <button className="px-1" onClick={() => handlePrevious('top')}>Previous</button>
