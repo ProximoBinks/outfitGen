@@ -193,13 +193,13 @@ export default function Home({ tops, bottoms, socks, shoes }) {
         case 'decrease':
           return { ...transform, scale: Math.max(0.1, transform.scale - 0.1) };
         case 'moveLeft':
-          return { ...transform, x: transform.x - 10 };
+          return { ...transform, x: transform.x - 5 };
         case 'moveRight':
-          return { ...transform, x: transform.x + 10 };
+          return { ...transform, x: transform.x + 5 };
         case 'moveUp':
-          return { ...transform, y: transform.y - 10 };
+          return { ...transform, y: transform.y - 5 };
         case 'moveDown':
-          return { ...transform, y: transform.y + 10 };
+          return { ...transform, y: transform.y + 5 };
         default:
           return transform;
       }
