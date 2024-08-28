@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
+import Head from 'next/head';
 
 export async function getStaticProps() {
   const fetchImagesFromCloudinary = async (folder) => {
@@ -228,7 +229,15 @@ export default function Home({ tops, bottoms, socks, shoes }) {
   };
 
   return (
+    
     <div className="mt-2 mb-4 text-center">
+      <Head>
+        <title>Home — Outfit Gen</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta charSet="UTF-8" />
+        <meta name="author" content="Elliot Koh" />
+        <meta name="description" content="Outfit Gen made by Elliot" />
+      </Head>
       <h1 className="font-bold">Outfit Gen</h1>
       
       <div className="mt-4">
@@ -291,7 +300,7 @@ export default function Home({ tops, bottoms, socks, shoes }) {
         />
       </div>
 
-      <div className="mt-[-100px]">
+      <div className="mt-[-150px]">
         <div className="relative mt-5 z-20">
           <h2 className="font-bold">Tops</h2>
           <button className="px-1" onClick={() => handlePrevious('top')}>Previous</button>
@@ -354,6 +363,7 @@ export default function Home({ tops, bottoms, socks, shoes }) {
           </button>
         </div>
       </div>
+      <footer className="mt-6 w-full flex items-center justify-center">&copy; Elliot Koh 2024</footer>
     </div>
   );
 }
