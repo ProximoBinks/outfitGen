@@ -39,35 +39,39 @@ export default function Home({ tops, bottoms, socks, shoes }) {
   useEffect(() => {
     const loadCustomizations = async () => {
       try {
-        // Load customizations for the current top image
         let response = await fetch(`/tops/${tops[topIndex].replace(/\.[^/.]+$/, "")}.json`);
         if (response.ok) {
           const data = await response.json();
           setTopTransform(data || { scale: 1, x: 0, y: 0 });
+        } else {
+          setTopTransform({ scale: 1, x: 0, y: 0 });
         }
 
-        // Load customizations for the current bottom image
         response = await fetch(`/bottoms/${bottoms[bottomIndex].replace(/\.[^/.]+$/, "")}.json`);
         if (response.ok) {
           const data = await response.json();
           setBottomTransform(data || { scale: 1, x: 0, y: 0 });
+        } else {
+          setBottomTransform({ scale: 1, x: 0, y: 0 });
         }
 
-        // Load customizations for the current sock image
         response = await fetch(`/socks/${socks[sockIndex].replace(/\.[^/.]+$/, "")}.json`);
         if (response.ok) {
           const data = await response.json();
           setSockTransform(data || { scale: 1, x: 0, y: 0 });
+        } else {
+          setSockTransform({ scale: 1, x: 0, y: 0 });
         }
 
-        // Load customizations for the current shoe image
         response = await fetch(`/shoes/${shoes[shoeIndex].replace(/\.[^/.]+$/, "")}.json`);
         if (response.ok) {
           const data = await response.json();
           setShoeTransform(data || { scale: 1, x: 0, y: 0 });
+        } else {
+          setShoeTransform({ scale: 1, x: 0, y: 0 });
         }
       } catch (error) {
-        console.error('Failed to load customizations:', error);
+        console.error('Error loading customizations:', error);
       }
     };
     loadCustomizations();
@@ -75,7 +79,6 @@ export default function Home({ tops, bottoms, socks, shoes }) {
 
   const saveCustomization = async () => {
     try {
-      // Save customization for the top image
       let filename = `tops/${tops[topIndex].replace(/\.[^/.]+$/, "")}.json`;
       let response = await fetch('/api/saveCustomization', {
         method: 'POST',
@@ -88,7 +91,6 @@ export default function Home({ tops, bottoms, socks, shoes }) {
         }),
       });
 
-      // Save customization for the bottom image
       filename = `bottoms/${bottoms[bottomIndex].replace(/\.[^/.]+$/, "")}.json`;
       response = await fetch('/api/saveCustomization', {
         method: 'POST',
@@ -101,7 +103,6 @@ export default function Home({ tops, bottoms, socks, shoes }) {
         }),
       });
 
-      // Save customization for the sock image
       filename = `socks/${socks[sockIndex].replace(/\.[^/.]+$/, "")}.json`;
       response = await fetch('/api/saveCustomization', {
         method: 'POST',
@@ -114,7 +115,6 @@ export default function Home({ tops, bottoms, socks, shoes }) {
         }),
       });
 
-      // Save customization for the shoe image
       filename = `shoes/${shoes[shoeIndex].replace(/\.[^/.]+$/, "")}.json`;
       response = await fetch('/api/saveCustomization', {
         method: 'POST',
@@ -207,18 +207,35 @@ export default function Home({ tops, bottoms, socks, shoes }) {
     }
   };
 
+  const randomizeOutfit = () => {
+    setTopIndex(Math.floor(Math.random() * tops.length));
+    setBottomIndex(Math.floor(Math.random() * bottoms.length));
+    setSockIndex(Math.floor(Math.random() * socks.length));
+    setShoeIndex(Math.floor(Math.random() * shoes.length));
+  };
+
   return (
-    <div style={{ textAlign: 'center' }}>
-      <h1>Character Creation</h1>
-      <div style={{ position: 'relative', width: '300px', height: '500px', margin: '0 auto' }}>
+    <div className="mt-2 mb-4 text-center">
+      <h1 className="font-bold">Outfit Gen</h1>
+      
+      <div className="mt-4">
+        <button 
+          className="bg-green-500 text-white px-4 py-2 rounded-xl font-bold mb-4"
+          onClick={randomizeOutfit}
+        >
+          Randomise Outfit
+        </button>
+      </div>
+
+      <div className="relative w-[300px] h-[500px] mx-auto z-10">
         <Image 
           src={`/${tops[topIndex]}`} 
           alt="Top" 
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           priority
+          className="object-contain"
           style={{
-            objectFit: 'contain',
             transform: `translate(${topTransform.x}px, ${topTransform.y}px) scale(${topTransform.scale})`,
             zIndex: 4,
           }} 
@@ -229,8 +246,8 @@ export default function Home({ tops, bottoms, socks, shoes }) {
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           priority
+          className="object-contain"
           style={{
-            objectFit: 'contain',
             transform: `translate(${bottomTransform.x}px, ${bottomTransform.y}px) scale(${bottomTransform.scale})`,
             zIndex: 3,
           }} 
@@ -241,8 +258,8 @@ export default function Home({ tops, bottoms, socks, shoes }) {
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           priority
+          className="object-contain"
           style={{
-            objectFit: 'contain',
             transform: `translate(${sockTransform.x}px, ${sockTransform.y}px) scale(${sockTransform.scale})`,
             zIndex: 2,
           }} 
@@ -253,72 +270,76 @@ export default function Home({ tops, bottoms, socks, shoes }) {
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           priority
+          className="object-contain"
           style={{
-            objectFit: 'contain',
             transform: `translate(${shoeTransform.x}px, ${shoeTransform.y}px) scale(${shoeTransform.scale})`,
             zIndex: 1,
           }} 
         />
       </div>
 
-      <div style={{ marginTop: '20px' }}>
-        <h2>Tops</h2>
-        <button onClick={() => handlePrevious('top')}>Previous</button>
-        <button onClick={() => handleNext('top')}>Next</button>
-        <div>
+<div className="mt-[-100px]">
+      <div className="relative mt-5 z-20">
+        <h2 className="font-bold">Tops</h2>
+        <button className="px-1" onClick={() => handlePrevious('top')}>Previous</button>
+        <button className="px-1" onClick={() => handleNext('top')}>Next</button>
+        <div className="flex gap-2 items-center justify-center w-full">
           <button onClick={() => handleTransform('top', 'increase')}>Larger</button>
           <button onClick={() => handleTransform('top', 'decrease')}>Smaller</button>
-          <button onClick={() => handleTransform('top', 'moveLeft')}>Move Left</button>
-          <button onClick={() => handleTransform('top', 'moveRight')}>Move Right</button>
-          <button onClick={() => handleTransform('top', 'moveUp')}>Move Up</button>
-          <button onClick={() => handleTransform('top', 'moveDown')}>Move Down</button>
+          <button onClick={() => handleTransform('top', 'moveLeft')}>Left</button>
+          <button onClick={() => handleTransform('top', 'moveRight')}>Right</button>
+          <button onClick={() => handleTransform('top', 'moveUp')}>Up</button>
+          <button onClick={() => handleTransform('top', 'moveDown')}>Down</button>
         </div>
       </div>
 
-      <div style={{ marginTop: '20px' }}>
-        <h2>Bottoms</h2>
-        <button onClick={() => handlePrevious('bottom')}>Previous</button>
-        <button onClick={() => handleNext('bottom')}>Next</button>
-        <div>
+      <div className="mt-5 relative z-20">
+        <h2 className="font-bold">Bottoms</h2>
+        <button className="px-1" onClick={() => handlePrevious('bottom')}>Previous</button>
+        <button className="px-1" onClick={() => handleNext('bottom')}>Next</button>
+        <div className="flex gap-2 items-center justify-center w-full">
           <button onClick={() => handleTransform('bottom', 'increase')}>Larger</button>
           <button onClick={() => handleTransform('bottom', 'decrease')}>Smaller</button>
-          <button onClick={() => handleTransform('bottom', 'moveLeft')}>Move Left</button>
-          <button onClick={() => handleTransform('bottom', 'moveRight')}>Move Right</button>
-          <button onClick={() => handleTransform('bottom', 'moveUp')}>Move Up</button>
-          <button onClick={() => handleTransform('bottom', 'moveDown')}>Move Down</button>
+          <button onClick={() => handleTransform('bottom', 'moveLeft')}>Left</button>
+          <button onClick={() => handleTransform('bottom', 'moveRight')}>Right</button>
+          <button onClick={() => handleTransform('bottom', 'moveUp')}>Up</button>
+          <button onClick={() => handleTransform('bottom', 'moveDown')}>Down</button>
         </div>
       </div>
 
-      <div style={{ marginTop: '20px' }}>
-        <h2>Socks</h2>
-        <button onClick={() => handlePrevious('sock')}>Previous</button>
-        <button onClick={() => handleNext('sock')}>Next</button>
-        <div>
+      <div className="mt-5 relative z-20">
+        <h2 className="font-bold">Socks</h2>
+        <button className="px-1" onClick={() => handlePrevious('sock')}>Previous</button>
+        <button className="px-1" onClick={() => handleNext('sock')}>Next</button>
+        <div className="flex gap-2 items-center justify-center w-full">
           <button onClick={() => handleTransform('sock', 'increase')}>Larger</button>
           <button onClick={() => handleTransform('sock', 'decrease')}>Smaller</button>
-          <button onClick={() => handleTransform('sock', 'moveLeft')}>Move Left</button>
-          <button onClick={() => handleTransform('sock', 'moveRight')}>Move Right</button>
-          <button onClick={() => handleTransform('sock', 'moveUp')}>Move Up</button>
-          <button onClick={() => handleTransform('sock', 'moveDown')}>Move Down</button>
+          <button onClick={() => handleTransform('sock', 'moveLeft')}>Left</button>
+          <button onClick={() => handleTransform('sock', 'moveRight')}>Right</button>
+          <button onClick={() => handleTransform('sock', 'moveUp')}>Up</button>
+          <button onClick={() => handleTransform('sock', 'moveDown')}>Down</button>
         </div>
       </div>
 
-      <div style={{ marginTop: '20px' }}>
-        <h2>Shoes</h2>
-        <button onClick={() => handlePrevious('shoe')}>Previous</button>
-        <button onClick={() => handleNext('shoe')}>Next</button>
-        <div>
+      <div className="mt-5 relative z-20">
+        <h2 className="font-bold">Shoes</h2>
+        <button className="px-1" onClick={() => handlePrevious('shoe')}>Previous</button>
+        <button className="px-1" onClick={() => handleNext('shoe')}>Next</button>
+        <div className="flex gap-2 items-center justify-center w-full">
           <button onClick={() => handleTransform('shoe', 'increase')}>Larger</button>
           <button onClick={() => handleTransform('shoe', 'decrease')}>Smaller</button>
-          <button onClick={() => handleTransform('shoe', 'moveLeft')}>Move Left</button>
-          <button onClick={() => handleTransform('shoe', 'moveRight')}>Move Right</button>
-          <button onClick={() => handleTransform('shoe', 'moveUp')}>Move Up</button>
-          <button onClick={() => handleTransform('shoe', 'moveDown')}>Move Down</button>
+          <button onClick={() => handleTransform('shoe', 'moveLeft')}>Left</button>
+          <button onClick={() => handleTransform('shoe', 'moveRight')}>Right</button>
+          <button onClick={() => handleTransform('shoe', 'moveUp')}>Up</button>
+          <button onClick={() => handleTransform('shoe', 'moveDown')}>Down</button>
         </div>
       </div>
 
-      <div style={{ marginTop: '40px' }}>
-        <button onClick={saveCustomization}>Save Customization</button>
+      <div className="mt-10 relative z-20">
+        <button className="bg-blue-500 px-2 py-1 rounded-xl text-white font-bold" onClick={saveCustomization}>
+          Save Customisation
+        </button>
+      </div>
       </div>
     </div>
   );
