@@ -1,19 +1,31 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import fs from 'fs';
-import path from 'path';
+import axios from 'axios';
 
 export async function getStaticProps() {
-  const getImages = (dir) => {
-    return fs.readdirSync(path.join(process.cwd(), 'public', dir))
-      .filter((file) => /\.(jpeg|jpg|png|gif|webp)$/i.test(file))
-      .map((file) => path.join(dir, file));
+  const fetchImagesFromCloudinary = async (folder) => {
+    const url = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/resources/image`;
+    const params = {
+      prefix: folder,
+      type: 'upload',
+      max_results: 100,
+    };
+
+    const response = await axios.get(url, {
+      auth: {
+        username: process.env.CLOUDINARY_API_KEY,
+        password: process.env.CLOUDINARY_API_SECRET,
+      },
+      params,
+    });
+
+    return response.data.resources.map((resource) => resource.secure_url);
   };
 
-  const tops = getImages('tops');
-  const bottoms = getImages('bottoms');
-  const socks = getImages('socks');
-  const shoes = getImages('shoes');
+  const tops = await fetchImagesFromCloudinary('tops');
+  const bottoms = await fetchImagesFromCloudinary('bottoms');
+  const socks = await fetchImagesFromCloudinary('socks');
+  const shoes = await fetchImagesFromCloudinary('shoes');
 
   return {
     props: {
@@ -223,13 +235,13 @@ export default function Home({ tops, bottoms, socks, shoes }) {
           className="bg-green-500 text-white px-4 py-2 rounded-xl font-bold mb-4"
           onClick={randomizeOutfit}
         >
-          Randomise Outfit
+          Randomize Outfit
         </button>
       </div>
 
       <div className="relative w-[300px] h-[500px] mx-auto z-10">
         <Image 
-          src={`/${tops[topIndex]}`} 
+          src={tops[topIndex]} 
           alt="Top" 
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -241,7 +253,7 @@ export default function Home({ tops, bottoms, socks, shoes }) {
           }} 
         />
         <Image 
-          src={`/${bottoms[bottomIndex]}`} 
+          src={bottoms[bottomIndex]} 
           alt="Bottom" 
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -253,7 +265,7 @@ export default function Home({ tops, bottoms, socks, shoes }) {
           }} 
         />
         <Image 
-          src={`/${socks[sockIndex]}`} 
+          src={socks[sockIndex]} 
           alt="Sock" 
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -265,7 +277,7 @@ export default function Home({ tops, bottoms, socks, shoes }) {
           }} 
         />
         <Image 
-          src={`/${shoes[shoeIndex]}`} 
+          src={shoes[shoeIndex]} 
           alt="Shoe" 
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -278,68 +290,68 @@ export default function Home({ tops, bottoms, socks, shoes }) {
         />
       </div>
 
-<div className="mt-[-100px]">
-      <div className="relative mt-5 z-20">
-        <h2 className="font-bold">Tops</h2>
-        <button className="px-1" onClick={() => handlePrevious('top')}>Previous</button>
-        <button className="px-1" onClick={() => handleNext('top')}>Next</button>
-        <div className="flex gap-2 items-center justify-center w-full">
-          <button onClick={() => handleTransform('top', 'increase')}>Larger</button>
-          <button onClick={() => handleTransform('top', 'decrease')}>Smaller</button>
-          <button onClick={() => handleTransform('top', 'moveLeft')}>Left</button>
-          <button onClick={() => handleTransform('top', 'moveRight')}>Right</button>
-          <button onClick={() => handleTransform('top', 'moveUp')}>Up</button>
-          <button onClick={() => handleTransform('top', 'moveDown')}>Down</button>
+      <div className="mt-[-130px]">
+        <div className="relative mt-5 z-20">
+          <h2 className="font-bold">Tops</h2>
+          <button className="px-1" onClick={() => handlePrevious('top')}>Previous</button>
+          <button className="px-1" onClick={() => handleNext('top')}>Next</button>
+          <div className="flex gap-2 items-center justify-center w-full">
+            <button onClick={() => handleTransform('top', 'increase')}>Larger</button>
+            <button onClick={() => handleTransform('top', 'decrease')}>Smaller</button>
+            <button onClick={() => handleTransform('top', 'moveLeft')}>Left</button>
+            <button onClick={() => handleTransform('top', 'moveRight')}>Right</button>
+            <button onClick={() => handleTransform('top', 'moveUp')}>Up</button>
+            <button onClick={() => handleTransform('top', 'moveDown')}>Down</button>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-5 relative z-20">
-        <h2 className="font-bold">Bottoms</h2>
-        <button className="px-1" onClick={() => handlePrevious('bottom')}>Previous</button>
-        <button className="px-1" onClick={() => handleNext('bottom')}>Next</button>
-        <div className="flex gap-2 items-center justify-center w-full">
-          <button onClick={() => handleTransform('bottom', 'increase')}>Larger</button>
-          <button onClick={() => handleTransform('bottom', 'decrease')}>Smaller</button>
-          <button onClick={() => handleTransform('bottom', 'moveLeft')}>Left</button>
-          <button onClick={() => handleTransform('bottom', 'moveRight')}>Right</button>
-          <button onClick={() => handleTransform('bottom', 'moveUp')}>Up</button>
-          <button onClick={() => handleTransform('bottom', 'moveDown')}>Down</button>
+        <div className="mt-5 relative z-20">
+          <h2 className="font-bold">Bottoms</h2>
+          <button className="px-1" onClick={() => handlePrevious('bottom')}>Previous</button>
+          <button className="px-1" onClick={() => handleNext('bottom')}>Next</button>
+          <div className="flex gap-2 items-center justify-center w-full">
+            <button onClick={() => handleTransform('bottom', 'increase')}>Larger</button>
+            <button onClick={() => handleTransform('bottom', 'decrease')}>Smaller</button>
+            <button onClick={() => handleTransform('bottom', 'moveLeft')}>Left</button>
+            <button onClick={() => handleTransform('bottom', 'moveRight')}>Right</button>
+            <button onClick={() => handleTransform('bottom', 'moveUp')}>Up</button>
+            <button onClick={() => handleTransform('bottom', 'moveDown')}>Down</button>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-5 relative z-20">
-        <h2 className="font-bold">Socks</h2>
-        <button className="px-1" onClick={() => handlePrevious('sock')}>Previous</button>
-        <button className="px-1" onClick={() => handleNext('sock')}>Next</button>
-        <div className="flex gap-2 items-center justify-center w-full">
-          <button onClick={() => handleTransform('sock', 'increase')}>Larger</button>
-          <button onClick={() => handleTransform('sock', 'decrease')}>Smaller</button>
-          <button onClick={() => handleTransform('sock', 'moveLeft')}>Left</button>
-          <button onClick={() => handleTransform('sock', 'moveRight')}>Right</button>
-          <button onClick={() => handleTransform('sock', 'moveUp')}>Up</button>
-          <button onClick={() => handleTransform('sock', 'moveDown')}>Down</button>
+        <div className="mt-5 relative z-20">
+          <h2 className="font-bold">Socks</h2>
+          <button className="px-1" onClick={() => handlePrevious('sock')}>Previous</button>
+          <button className="px-1" onClick={() => handleNext('sock')}>Next</button>
+          <div className="flex gap-2 items-center justify-center w-full">
+            <button onClick={() => handleTransform('sock', 'increase')}>Larger</button>
+            <button onClick={() => handleTransform('sock', 'decrease')}>Smaller</button>
+            <button onClick={() => handleTransform('sock', 'moveLeft')}>Left</button>
+            <button onClick={() => handleTransform('sock', 'moveRight')}>Right</button>
+            <button onClick={() => handleTransform('sock', 'moveUp')}>Up</button>
+            <button onClick={() => handleTransform('sock', 'moveDown')}>Down</button>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-5 relative z-20">
-        <h2 className="font-bold">Shoes</h2>
-        <button className="px-1" onClick={() => handlePrevious('shoe')}>Previous</button>
-        <button className="px-1" onClick={() => handleNext('shoe')}>Next</button>
-        <div className="flex gap-2 items-center justify-center w-full">
-          <button onClick={() => handleTransform('shoe', 'increase')}>Larger</button>
-          <button onClick={() => handleTransform('shoe', 'decrease')}>Smaller</button>
-          <button onClick={() => handleTransform('shoe', 'moveLeft')}>Left</button>
-          <button onClick={() => handleTransform('shoe', 'moveRight')}>Right</button>
-          <button onClick={() => handleTransform('shoe', 'moveUp')}>Up</button>
-          <button onClick={() => handleTransform('shoe', 'moveDown')}>Down</button>
+        <div className="mt-5 relative z-20">
+          <h2 className="font-bold">Shoes</h2>
+          <button className="px-1" onClick={() => handlePrevious('shoe')}>Previous</button>
+          <button className="px-1" onClick={() => handleNext('shoe')}>Next</button>
+          <div className="flex gap-2 items-center justify-center w-full">
+            <button onClick={() => handleTransform('shoe', 'increase')}>Larger</button>
+            <button onClick={() => handleTransform('shoe', 'decrease')}>Smaller</button>
+            <button onClick={() => handleTransform('shoe', 'moveLeft')}>Left</button>
+            <button onClick={() => handleTransform('shoe', 'moveRight')}>Right</button>
+            <button onClick={() => handleTransform('shoe', 'moveUp')}>Up</button>
+            <button onClick={() => handleTransform('shoe', 'moveDown')}>Down</button>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-10 relative z-20">
-        <button className="bg-blue-500 px-2 py-1 rounded-xl text-white font-bold" onClick={saveCustomization}>
-          Save Customisation
-        </button>
-      </div>
+        <div className="mt-10 relative z-20">
+          <button className="bg-blue-500 px-2 py-1 rounded-xl text-white font-bold" onClick={saveCustomization}>
+            Save Customisation
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -4,4 +4,10 @@ const nextConfig = {
   swcMinify: true
 };
 
-module.exports = nextConfig;
+// next.config.js
+
+module.exports = {
+  images: {
+    domains: ['res.cloudinary.com'],
+  },
+};
